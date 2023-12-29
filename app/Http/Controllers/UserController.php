@@ -87,32 +87,39 @@ class UserController extends Controller
         return redirect('/')->with('success', 'You are now logged out.');
     }
 
-    public function showCorrectHomepage() {
+    public function showCorrectHomepage()
+    {
         if (auth()->check()) {
             return view('homepage-feed', ['posts' => auth()->user()->feedPosts()->latest()->paginate(4)]);
         } else {
             $postCount = Cache::remember('postCount', 20, function() {
-                return Post::count();
+                return Post::query()->count();
             });
             return view('homepage', ['postCount' => $postCount]);
         }
     }
 
-    public function loginApi(Request $request) {
+    public function loginApi(Request $request)
+    {
         $incomingFields = $request->validate([
             'username' => 'required',
             'password' => 'required'
         ]);
 
         if (auth()->attempt($incomingFields)) {
-            $user = User::where('username', $incomingFields['username'])->first();
-            $token = $user->createToken('ourapptoken')->plainTextToken;
-            return $token;
+            $user  = User::query()->where('username', $incomingFields['username'])->first();
+
+            if (!$user) {
+                return 'sorry';
+            }
+            return $user->createToken('ourapptoken')->plainTextToken;
         }
+
         return 'sorry';
     }
 
-    public function login(Request $request) {
+    public function login(Request $request)
+    {
         $incomingFields = $request->validate([
             'loginusername' => 'required',
             'loginpassword' => 'required'
