@@ -2,7 +2,7 @@ import DOMPurify from "dompurify";
 
 export default class Profile {
     constructor() {
-        this.links = document.querySelectorAll(".profile-nav a");
+        this.links       = document.querySelectorAll(".profile-nav a");
         this.contentArea = document.querySelector(".profile-slot-content");
         this.events();
     }
@@ -36,6 +36,7 @@ export default class Profile {
         this.links.forEach((link) => link.classList.remove("active"));
         e.target.classList.add("active");
         e.preventDefault();
+
         const response = await axios.get(e.target.href + "/raw");
         this.contentArea.innerHTML = DOMPurify.sanitize(response.data.theHTML);
         document.title = response.data.docTitle + " | OurApp";

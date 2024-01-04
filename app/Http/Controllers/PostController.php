@@ -10,11 +10,13 @@ use Illuminate\Support\Facades\Mail;
 
 class PostController extends Controller
 {
-    public function search($term) {
+    public function search($term)
+    {
         $posts = Post::search($term)->get();
+
         $posts->load('user:id,username,avatar');
+
         return $posts;
-        //return Post::where('title', 'LIKE', '%' . $term . '%')->orWhere('body', 'LIKE', '%' . $term . '%')->with('user:id,username,avatar')->get();
     }
 
     public function actuallyUpdate(Post $post, Request $request) {
@@ -45,46 +47,53 @@ class PostController extends Controller
         return 'true';
     }
 
-    public function viewSinglePost(Post $post) {
+    public function viewSinglePost(Post $post)
+    {
         $post['body'] = strip_tags(Str::markdown($post->body), '<p><ul><ol><li><strong><em><h3><br>');
+
         return view('single-post', ['post' => $post]);
     }
 
-    public function storeNewPost(Request $request) {
+    public function storeNewPost(Request $request)
+    {
         $incomingFields = $request->validate([
             'title' => 'required',
             'body' => 'required'
         ]);
 
-        $incomingFields['title'] = strip_tags($incomingFields['title']);
-        $incomingFields['body'] = strip_tags($incomingFields['body']);
+        $incomingFields['title']   = strip_tags($incomingFields['title']);
+        $incomingFields['body']    = strip_tags($incomingFields['body']);
         $incomingFields['user_id'] = auth()->id();
 
-        $newPost = Post::create($incomingFields);
+        /** @var Post $newPost */
+        $newPost = Post::query()->create($incomingFields);
 
         dispatch(new SendNewPostEmail(['sendTo' => auth()->user()->email, 'name' => auth()->user()->username, 'title' => $newPost->title]));
 
         return redirect("/post/{$newPost->id}")->with('success', 'New post successfully created.');
     }
 
-    public function storeNewPostApi(Request $request) {
+    public function storeNewPostApi(Request $request)
+    {
         $incomingFields = $request->validate([
             'title' => 'required',
             'body' => 'required'
         ]);
 
-        $incomingFields['title'] = strip_tags($incomingFields['title']);
-        $incomingFields['body'] = strip_tags($incomingFields['body']);
+        $incomingFields['title']   = strip_tags($incomingFields['title']);
+        $incomingFields['body']    = strip_tags($incomingFields['body']);
         $incomingFields['user_id'] = auth()->id();
 
-        $newPost = Post::create($incomingFields);
+        /** @var Post $newPost */
+        $newPost = Post::query()->create($incomingFields);
 
         dispatch(new SendNewPostEmail(['sendTo' => auth()->user()->email, 'name' => auth()->user()->username, 'title' => $newPost->title]));
 
         return $newPost->id;
     }
 
-    public function showCreateForm() {
+    public function showCreateForm()
+    {
         return view('create-post');
     }
 }

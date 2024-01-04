@@ -10,8 +10,9 @@ use App\Events\OurExampleEvent;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Cache;
-use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Imagick\Driver;
 
 class UserController extends Controller
 {
@@ -25,7 +26,11 @@ class UserController extends Controller
 
         $filename = $user->id . '-' . uniqid() . '.jpg';
 
-        $imgData = Image::make($request->file('avatar'))->fit(120)->encode('jpg');
+        $imgData = (new ImageManager(new Driver()))
+            ->read($request->file('avatar'))
+            ->scaleDown(120)
+            ->encodeByMediaType();
+
         Storage::put('public/avatars/' . $filename, $imgData);
 
         $oldAvatar = $user->avatar;
@@ -52,7 +57,7 @@ class UserController extends Controller
         if (auth()->check()) {
             $currentlyFollowing = Follow::query()
                 ->where('user_id', auth()->user()->id)
-                ->where('followeduser', $user->id)
+                ->where('followed_user_id', $user->id)
                 ->count();
         }
 
