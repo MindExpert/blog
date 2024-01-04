@@ -69,7 +69,7 @@ Route::post('/send-chat-message', function (Request $request) {
     broadcast(
         new ChatMessage([
             'username'   => auth()->user()->username,
-            'text_value' => strip_tags($request->textvalue),
+            'text_value' => strip_tags($request->text_value),
             'avatar'     => auth()->user()->avatar
         ])
     )->toOthers();

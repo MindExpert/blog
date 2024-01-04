@@ -12,6 +12,8 @@
     },
     "dependencies": {
         "dompurify": "^3.0.6",
-        "jsdom": "^23.0.1"
+        "jsdom": "^23.0.1",
+        "laravel-echo": "^1.15.3",
+        "pusher-js": "^8.4.0-rc2"
     }
 }
