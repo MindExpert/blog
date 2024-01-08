@@ -11,6 +11,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 
 /**
@@ -69,7 +70,8 @@ class User extends Authenticatable
         'is_admin'          => 'boolean',
     ];
 
-    protected function avatar(): Attribute {
+    protected function avatar(): Attribute
+    {
         return Attribute::make(get: function($value) {
             return $value ? '/storage/avatars/' . $value : '/fallback-avatar.jpg';
         });

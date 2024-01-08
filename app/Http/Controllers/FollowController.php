@@ -40,6 +40,6 @@ class FollowController extends Controller
             ->where('followed_user_id', '=', $user->id)
             ->delete();
 
-        return back()->with('success', 'User succesfully unfollowed.');
+        return back()->with('success', 'User successfully unfollowed.');
     }
 }

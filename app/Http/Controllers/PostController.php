@@ -19,31 +19,38 @@ class PostController extends Controller
         return $posts;
     }
 
-    public function actuallyUpdate(Post $post, Request $request) {
+    public function actuallyUpdate(Post $post, Request $request)
+    {
         $incomingFields = $request->validate([
-            'title' => 'required',
-            'body' => 'required'
+            'title' => ['required'],
+            'body'  => ['required']
         ]);
 
         $incomingFields['title'] = strip_tags($incomingFields['title']);
-        $incomingFields['body'] = strip_tags($incomingFields['body']);
+        $incomingFields['body']  = strip_tags($incomingFields['body']);
 
         $post->update($incomingFields);
 
         return back()->with('success', 'Post successfully updated.');
     }
 
-    public function showEditForm(Post $post) {
-        return view('edit-post', ['post' => $post]);
+    public function showEditForm(Post $post)
+    {
+        return view('edit-post', compact('post'));
     }
 
-    public function delete(Post $post) {
+    public function delete(Post $post)
+    {
         $post->delete();
-        return redirect('/profile/' . auth()->user()->username)->with('success', 'Post successfully deleted.');
+
+        return redirect('/profile/' . auth()->user()->username)
+            ->with('success', 'Post successfully deleted.');
     }
 
-    public function deleteApi(Post $post) {
+    public function deleteApi(Post $post)
+    {
         $post->delete();
+
         return 'true';
     }
 
@@ -57,8 +64,8 @@ class PostController extends Controller
     public function storeNewPost(Request $request)
     {
         $incomingFields = $request->validate([
-            'title' => 'required',
-            'body' => 'required'
+            'title' => ['required'],
+            'body'  => ['required']
         ]);
 
         $incomingFields['title']   = strip_tags($incomingFields['title']);
@@ -76,8 +83,8 @@ class PostController extends Controller
     public function storeNewPostApi(Request $request)
     {
         $incomingFields = $request->validate([
-            'title' => 'required',
-            'body' => 'required'
+            'title' => ['required'],
+            'body'  => ['required']
         ]);
 
         $incomingFields['title']   = strip_tags($incomingFields['title']);
